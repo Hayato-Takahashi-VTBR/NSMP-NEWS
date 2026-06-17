@@ -1,9 +1,9 @@
 <!doctype html>
-<html>
+<html lang="pt-BR">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>NSMP - Notícias</title>
+    <title>NSMP - Central de Notícias</title>
     <link rel="stylesheet" href="static/css/style.css">
   </head>
   <body class="terminal-bg">
@@ -11,9 +11,17 @@
       <div class="terminal-topbar">
         <div class="dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
         <div class="title">NSMP - Central de Notícias</div>
+        <div class="clock" id="clock"></div>
       </div>
+      <header class="site-header">
+        <div class="wrap">
+          <nav>
+            <a href="index.html">Início</a>
+          </nav>
+        </div>
+      </header>
       <main class="wrap terminal-screen">
-        <h1>Últimas notícias</h1>
+        
         
           <div class="forum-post">
             <div class="post-left">
@@ -22,17 +30,32 @@
             </div>
             <div class="post-right">
               <div class="post-head">
-                <div class="post-title"><a href="posts/example-2026-06-17-boas-vindas.html">Bem-vindos ao NSMP News</a></div>
-                <div class="post-meta">2026-06-17</div>
+                <div class="post-title"><a href="posts/example-2026-06-17-boas-vindas.html" style="color:#23ff00;text-decoration:none">Bem-vindos ao NSMP News</a></div>
+                <div class="post-meta">#1 • 2026-06-17</div>
               </div>
               <div class="post-body">
-                <p>Esse é o primeiro post publicado no site de notícias do NSMP. Sinta-se livre para abrir um pull request com suas próprias notícias.</p>
+                
+                <pre class="post-text">Esse é o primeiro post publicado no site de notícias do NSMP. Sinta-se livre para abrir um pull request com suas próprias notícias.</pre>
               </div>
             </div>
           </div>
         
       </main>
-      <footer class="site-footer"><div class="wrap"><small>&copy; NSMP</small></div></footer>
+      <footer class="site-footer">
+        <div class="wrap">
+          <small>&copy; NSMP</small>
+        </div>
+      </footer>
     </div>
+    <script>
+      function updateClock(){
+        const el=document.getElementById('clock');
+        if(!el) return;
+        const d=new Date();
+        el.textContent = d.toLocaleString();
+      }
+      setInterval(updateClock,1000);
+      updateClock();
+    </script>
   </body>
 </html>

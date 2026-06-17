@@ -26,7 +26,9 @@ def load_posts():
             meta.setdefault('date', '')
             meta.setdefault('image', None)
             slug = os.path.splitext(os.path.basename(path))[0]
-            posts.append({'meta':meta, 'html':html, 'slug':slug})
+            # Create preview (first 200 chars or full content if shorter)
+            preview = post.content[:200] + ('...' if len(post.content) > 200 else '')
+            posts.append({'meta':meta, 'html':html, 'preview':preview, 'slug':slug})
     posts.sort(key=lambda p: p['meta'].get('date',''), reverse=True)
     return posts
 
@@ -47,14 +49,20 @@ def build():
 
     # render index
     tpl = env.get_template('index.html')
+    # Add id and preview to posts for index rendering
+    posts_with_id = []
+    for i, p in enumerate(posts, 1):
+        p['id'] = i
+        posts_with_id.append(p)
+    
     with open(os.path.join(OUT_DIR, 'index.html'), 'w', encoding='utf-8') as f:
-        f.write(tpl.render(posts=posts))
+        f.write(tpl.render(posts=posts_with_id))
 
     # render posts
     post_tpl = env.get_template('post.html')
     posts_out = os.path.join(OUT_DIR, 'posts')
     os.makedirs(posts_out, exist_ok=True)
-    for p in posts:
+    for i, p in enumerate(posts_with_id, 1):
         out_path = os.path.join(posts_out, p['slug'] + '.html')
         with open(out_path, 'w', encoding='utf-8') as f:
             f.write(post_tpl.render(post=p))
@@ -63,3 +71,4 @@ def build():
 
 if __name__ == '__main__':
     build()
+
