@@ -64,3 +64,19 @@ python set_admin_pwd.py
 
 O arquivo `.env` **não deve** ser comitado. Ele contém segredos e será ignorado se você adicionar `.env` ao `.gitignore`.
 
+Sincronização automática com GitHub (opcional)
+-------------------------------------------
+
+O app pode automaticamente criar o arquivo Markdown em `posts/`, commitar e dar push para `main` quando você publicar uma notícia pelo painel. Para isso, defina a variável de ambiente `GITHUB_TOKEN` (ou `GH_TOKEN`) com um token que tenha permissão `repo` no repositório.
+
+Exemplo (Linux/macOS):
+
+```bash
+export GITHUB_TOKEN="ghp_xxx..."
+python app.py
+```
+
+Se `GITHUB_TOKEN` não estiver configurado, o app tentará usar as credenciais git locais (SSH/HTTPS) para dar push.
+
+OBS: Para edições de posts existentes, o app **não** sincroniza automaticamente o arquivo Markdown correspondente; apenas novas postagens criadas via painel serão escritas e enviadas.
+

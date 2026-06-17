@@ -4,6 +4,9 @@ from datetime import datetime
 from functools import wraps
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, redirect, url_for, flash, session
+import subprocess
+import re
+import time
 
 # load environment variables from .env if present
 load_dotenv()
@@ -48,6 +51,70 @@ def init_db():
     )
     conn.commit()
     conn.close()
+
+
+def slugify(s):
+    s = s.lower()
+    s = re.sub(r'[^a-z0-9]+', '-', s)
+    s = s.strip('-')
+    return s
+
+
+def create_post_markdown(title, date, content, image=None):
+    slug = slugify(title)
+    timestamp = int(time.time())
+    filename = f"{date}-{slug}-{timestamp}.md"
+    path = os.path.join(BASE_DIR, 'posts')
+    os.makedirs(path, exist_ok=True)
+    fullpath = os.path.join(path, filename)
+    md = f"---\ntitle: {title}\ndate: {date}\nimage: {image if image else 'null'}\n---\n\n{content}\n"
+    with open(fullpath, 'w', encoding='utf-8') as f:
+        f.write(md)
+    return fullpath
+
+
+def git_commit_and_push(paths, message):
+    # try normal git push first; if GITHUB_TOKEN is set, use it for authenticated push
+    token = os.environ.get('GITHUB_TOKEN') or os.environ.get('GH_TOKEN')
+    try:
+        # add files
+        subprocess.run(['git', 'add'] + paths, check=True)
+        subprocess.run(['git', 'commit', '-m', message], check=True)
+    except subprocess.CalledProcessError:
+        # nothing to commit or error
+        return False
+
+    if token:
+        # get origin URL
+        try:
+            origin = subprocess.check_output(['git', 'remote', 'get-url', 'origin'], text=True).strip()
+        except subprocess.CalledProcessError:
+            return False
+
+        if origin.startswith('https://'):
+            secure = origin.replace('https://', f'https://{token}@')
+        elif origin.startswith('git@'):
+            # convert SSH to https
+            m = re.match(r'git@github.com:(.+)/(.+).git', origin)
+            if m:
+                owner, repo = m.group(1), m.group(2)
+                secure = f'https://{token}@github.com/{owner}/{repo}.git'
+            else:
+                secure = origin
+        else:
+            secure = origin
+
+        try:
+            subprocess.run(['git', 'push', secure, 'HEAD:main'], check=True)
+            return True
+        except subprocess.CalledProcessError:
+            return False
+    else:
+        try:
+            subprocess.run(['git', 'push', 'origin', 'main'], check=True)
+            return True
+        except subprocess.CalledProcessError:
+            return False
 
 
 def login_required(f):
@@ -123,6 +190,16 @@ def new_post():
         )
         conn.commit()
         conn.close()
+        # also create markdown and push to repo so static site is updated
+        try:
+            md_path = create_post_markdown(title, date, content, image_filename)
+            pushed = git_commit_and_push([md_path], f"Add post: {title}")
+            if pushed:
+                flash('Notícia publicada e enviada ao repositório.')
+            else:
+                flash('Notícia publicada localmente, mas falha ao enviar ao repositório.')
+        except Exception as e:
+            flash(f'Publicada, mas erro ao gerar/commit: {e}')
         return redirect(url_for('index'))
 
     today = datetime.utcnow().strftime('%Y-%m-%d')
@@ -171,6 +248,8 @@ def edit_post(post_id):
         )
         conn.commit()
         conn.close()
+        # Note: editing via UI does not currently update markdown files in repo
+        flash('Notícia atualizada (não sincronizada automaticamente com o repositório).')
         return redirect(url_for('index'))
 
     conn.close()
