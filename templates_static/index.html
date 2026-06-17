@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>NSMP - Notícias</title>
+    <link rel="stylesheet" href="static/css/style.css">
+  </head>
+  <body class="terminal-bg">
+    <div class="terminal-window">
+      <div class="terminal-topbar">
+        <div class="dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+        <div class="title">NSMP - Central de Notícias</div>
+      </div>
+      <main class="wrap terminal-screen">
+        <h1>Últimas notícias</h1>
+        {% for post in posts %}
+          <div class="forum-post">
+            <div class="post-left">
+              <div class="avatar">K</div>
+              <div class="user">Kaiser</div>
+            </div>
+            <div class="post-right">
+              <div class="post-head">
+                <div class="post-title"><a href="posts/{{ post.slug }}.html">{{ post.meta.title }}</a></div>
+                <div class="post-meta">{{ post.meta.date }}</div>
+              </div>
+              <div class="post-body">
+                {{ post.html | safe }}
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </main>
+      <footer class="site-footer"><div class="wrap"><small>&copy; NSMP</small></div></footer>
+    </div>
+  </body>
+</html>

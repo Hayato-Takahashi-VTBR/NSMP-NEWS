@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>NSMP - Central de Notícias</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  </head>
+  <body class="terminal-bg">
+    <div class="terminal-window">
+      <div class="terminal-topbar">
+        <div class="dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+        <div class="title">NSMP - Central de Notícias</div>
+        <div class="clock" id="clock"></div>
+      </div>
+      <header class="site-header">
+        <div class="wrap">
+          <nav>
+            <a href="{{ url_for('index') }}">Início</a>
+            {% if session.get('logged_in') %}
+              <a href="{{ url_for('new_post') }}">Nova notícia</a>
+              <a href="{{ url_for('logout') }}">Sair</a>
+            {% else %}
+              <a href="{{ url_for('login') }}">Login</a>
+            {% endif %}
+          </nav>
+          {% if session.get('logged_in') and session.get('admin_name') %}
+            <div class="admin-badge">{{ session.get('admin_name') }}</div>
+          {% endif %}
+        </div>
+      </header>
+      <main class="wrap terminal-screen">
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <ul class="flashes">
+            {% for m in messages %}
+              <li>{{ m }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      {% endwith %}
+      {% block content %}{% endblock %}
+      </main>
+      <footer class="site-footer">
+        <div class="wrap">
+          <small>&copy; NSMP</small>
+        </div>
+      </footer>
+    </div>
+    <script>
+      // simple clock in topbar
+      function updateClock(){
+        const el=document.getElementById('clock');
+        if(!el) return;
+        const d=new Date();
+        el.textContent = d.toLocaleString();
+      }
+      setInterval(updateClock,1000);
+      updateClock();
+    </script>
+  </body>
+</html>

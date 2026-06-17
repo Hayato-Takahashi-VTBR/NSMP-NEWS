@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Nova notícia</h2>
+<form method="post" enctype="multipart/form-data" class="post-form terminal-form">
+  <label>&gt; Título
+    <input type="text" name="title" required>
+  </label>
+
+  <label>&gt; Data
+    <input type="date" name="date" value="{{ today }}">
+  </label>
+
+  <label>&gt; Imagem (opcional)
+    <input type="file" name="image" accept="image/*">
+  </label>
+
+  <label>&gt; Conteúdo
+    <textarea name="content" rows="8"></textarea>
+  </label>
+
+  <button type="submit">Publicar</button>
+</form>
+
+{% endblock %}

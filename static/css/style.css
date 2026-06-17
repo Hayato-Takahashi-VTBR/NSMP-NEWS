@@ -1,0 +1,42 @@
+.terminal-bg{background:#000;color:#23ff00;min-height:100vh}
+.terminal-bg{background:#000;color:#23ff00;min-height:100vh}
+body{font-family: 'Courier New', Courier, monospace;margin:0}
+.terminal-window{max-width:980px;margin:18px auto;border:4px solid #083;background:linear-gradient(180deg,#001100 0,#000 100%);box-shadow:0 0 30px rgba(0,255,120,0.06)}
+.terminal-topbar{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:2px solid #062;background:rgba(0,0,0,0.2)}
+.terminal-topbar .dots{display:flex;gap:6px}
+.dot{width:12px;height:12px;border-radius:50%;display:inline-block}
+.dot.red{background:#ff5f56}
+.dot.yellow{background:#ffbd2e}
+.dot.green{background:#27c93f}
+.terminal-topbar .title{color:#aaffaa;font-weight:bold}
+.terminal-screen{padding:18px}
+.wrap{max-width:900px;margin:0 auto;padding:0 16px}
+.site-header{padding:6px 0 12px 0}
+.site-header nav{margin-bottom:6px}
+.site-header a{margin-right:12px;color:#7aff7a;text-decoration:none}
+.admin-badge{display:inline-block;color:#001100;background:#7aff7a;padding:4px 8px;border-radius:4px;margin-left:12px;font-weight:bold}
+
+.forum-post{display:flex;border-top:1px dashed #073;padding:14px 0}
+.post-left{width:100px;text-align:center;padding-right:12px}
+.avatar{width:64px;height:64px;border-radius:6px;background:#001100;border:2px solid #073;color:#23ff00;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto}
+.user{margin-top:8px;color:#7aff7a;font-size:13px}
+.post-right{flex:1}
+.post-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.post-title{color:#23ff00;font-weight:bold}
+.post-meta{color:#8aff8a;font-size:12px}
+.post-body{background:#000;border:1px solid #073;padding:12px;border-radius:6px}
+.post-text{white-space:pre-wrap;color:#baffb8;margin:0;font-family:inherit;font-size:15px}
+.post-image{max-width:100%;height:auto;border:1px solid #073;padding:4px;background:#000;margin:8px 0}
+.post-actions{margin-top:6px}
+.admin-link{color:#aaffaa;margin-right:8px}
+.linklike{background:none;border:none;color:#aaffaa;text-decoration:underline;cursor:pointer;padding:0;font-family:inherit}
+
+.post-form label{display:block;margin-bottom:10px;color:#23ff00}
+textarea,input[type=text],input[type=date],input[type=password]{width:100%;box-sizing:border-box;padding:8px;border:1px solid #073;background:#001100;color:#23ff00}
+button{background:#073;color:#23ff00;border:1px solid #0a6;padding:8px 12px;cursor:pointer}
+.flashes{list-style:none;padding:0;margin:8px 0;color:#ff6666}
+.current-image img{max-width:200px;margin-top:8px;border:1px solid #073}
+
+/* small screen tweaks */
+@media(max-width:700px){.forum-post{flex-direction:column}.post-left{width:auto;text-align:left;padding-bottom:8px}} 
+

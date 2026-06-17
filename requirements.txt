@@ -1,0 +1,4 @@
+Flask
+Jinja2
+markdown
+python-frontmatter

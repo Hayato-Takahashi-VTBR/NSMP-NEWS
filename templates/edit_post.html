@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Editar notícia</h2>
+<form method="post" enctype="multipart/form-data" class="post-form terminal-form">
+  <label>&gt; Título
+    <input type="text" name="title" value="{{ post['title'] }}" required>
+  </label>
+
+  <label>&gt; Data
+    <input type="date" name="date" value="{{ post['date'] }}">
+  </label>
+
+  {% if post['image'] %}
+    <div class="current-image">Imagem atual:<br>
+      <img class="post-image" src="{{ url_for('static', filename='uploads/' + post['image']) }}" alt="imagem">
+    </div>
+  {% endif %}
+
+  <label>&gt; Substituir imagem (opcional)
+    <input type="file" name="image" accept="image/*">
+  </label>
+
+  <label>&gt; Conteúdo
+    <textarea name="content" rows="8">{{ post['content'] }}</textarea>
+  </label>
+
+  <button type="submit">Salvar</button>
+</form>
+
+{% endblock %}
