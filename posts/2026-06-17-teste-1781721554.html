@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Teste</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+  </head>
+  <body class="terminal-bg">
+    <div class="terminal-window">
+      <div class="terminal-topbar">
+        <div class="dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+        <div class="title">NSMP - Central de Notícias</div>
+        <div class="clock" id="clock"></div>
+      </div>
+      <header class="site-header">
+        <div class="wrap">
+          <nav>
+            <a href="../index.html">Início</a>
+          </nav>
+        </div>
+      </header>
+      <main class="wrap terminal-screen">
+        <div class="forum-post">
+          <div class="post-left">
+            <div class="avatar">K</div>
+            <div class="user">Kaiser</div>
+          </div>
+          <div class="post-right">
+            <div class="post-head">
+              <div class="post-title">Teste</div>
+              <div class="post-meta">#2 • 2026-06-17</div>
+            </div>
+            <div class="post-body">
+              
+                <img class="post-image" src="1781721554.png" alt="imagem">
+              
+              <pre class="post-text"><p>aaaaaaaaa</p></pre>
+            </div>
+          </div>
+        </div>
+        <p><a href="../index.html" style="color:#7aff7a">&laquo; Voltar</a></p>
+      </main>
+      <footer class="site-footer">
+        <div class="wrap">
+          <small>&copy; NSMP</small>
+        </div>
+      </footer>
+    </div>
+    <script>
+      function updateClock(){
+        const el=document.getElementById('clock');
+        if(!el) return;
+        const d=new Date();
+        el.textContent = d.toLocaleString();
+      }
+      setInterval(updateClock,1000);
+      updateClock();
+    </script>
+  </body>
+</html>
