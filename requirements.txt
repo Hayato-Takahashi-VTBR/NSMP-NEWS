@@ -2,4 +2,5 @@ Flask
 Jinja2
 markdown
 python-frontmatter
+python-dotenv
 gunicorn

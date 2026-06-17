@@ -49,3 +49,18 @@ python build_static.py
 # o site será gerado na pasta `site/`
 ```
 
+Gerenciar senha de administrador localmente
+-----------------------------------------
+
+Você pode armazenar a senha e o nome do administrador em um arquivo `.env` para que o app Flask os carregue automaticamente.
+
+Use o helper incluído para criar/atualizar o `.env`:
+
+```bash
+python set_admin_pwd.py --password "2k0a0u7e" --name "Kaiser"
+# ou apenas rodar e seguir os prompts
+python set_admin_pwd.py
+```
+
+O arquivo `.env` **não deve** ser comitado. Ele contém segredos e será ignorado se você adicionar `.env` ao `.gitignore`.
+

@@ -2,7 +2,11 @@ import os
 import sqlite3
 from datetime import datetime
 from functools import wraps
+from dotenv import load_dotenv
 from flask import Flask, render_template, request, redirect, url_for, flash, session
+
+# load environment variables from .env if present
+load_dotenv()
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_FOLDER = os.path.join(BASE_DIR, 'static', 'uploads')
@@ -14,7 +18,7 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['SECRET_KEY'] = 'dev-secret'
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret')
 app.config['ADMIN_PASSWORD'] = os.environ.get('NSMP_ADMIN_PWD', '2k0a0u7e')
 app.config['ADMIN_NAME'] = os.environ.get('NSMP_ADMIN_NAME', 'Kaiser')
 
