@@ -24,8 +24,8 @@ body{font-family: 'Courier New', Courier, monospace;margin:0}
 .post-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
 .post-title{color:#23ff00;font-weight:bold}
 .post-meta{color:#8aff8a;font-size:12px}
-.post-body{background:#000;border:1px solid #073;padding:12px;border-radius:6px}
-.post-text{white-space:pre-wrap;color:#baffb8;margin:0;font-family:inherit;font-size:15px}
+.post-body{background:#000;border:1px solid #073;padding:16px;border-radius:8px;overflow:hidden}
+.post-text{white-space:pre-wrap;color:#baffb8;margin:0;font-family:inherit;font-size:15px;line-height:1.6;word-break:break-word}
 .post-image{max-width:100%;height:auto;border:1px solid #073;padding:4px;background:#000;margin:8px 0}
 .post-actions{margin-top:6px}
 .admin-link{color:#aaffaa;margin-right:8px}

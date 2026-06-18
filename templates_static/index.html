@@ -39,7 +39,7 @@
                 {% if post.meta.image %}
                   <img class="post-image" src="{{ post.meta.image }}" alt="imagem">
                 {% endif %}
-                <pre class="post-text">{{ post.preview }}</pre>
+                <div class="post-text">{{ post.html | safe }}</div>
               </div>
             </div>
           </div>
