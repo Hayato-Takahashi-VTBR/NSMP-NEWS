@@ -1,3 +1,4 @@
+import glob
 import os
 import sqlite3
 from datetime import datetime
@@ -45,11 +46,17 @@ def init_db():
             title TEXT NOT NULL,
             date TEXT NOT NULL,
             content TEXT NOT NULL,
-            image TEXT
+            image TEXT,
+            markdown_filename TEXT
         )
         '''
     )
     conn.commit()
+    try:
+        conn.execute('ALTER TABLE posts ADD COLUMN markdown_filename TEXT')
+        conn.commit()
+    except sqlite3.OperationalError:
+        pass
     conn.close()
 
 
@@ -60,6 +67,20 @@ def slugify(s):
     return s
 
 
+def write_markdown_file(fullpath, title, date, content, image=None):
+    front = [
+        '---',
+        f'title: {title}',
+        f'date: {date}',
+    ]
+    if image:
+        front.append(f'image: {image}')
+    front.append('---')
+    md = '\n'.join(front) + '\n\n' + content + '\n'
+    with open(fullpath, 'w', encoding='utf-8') as f:
+        f.write(md)
+
+
 def create_post_markdown(title, date, content, image=None):
     slug = slugify(title)
     timestamp = int(time.time())
@@ -67,9 +88,16 @@ def create_post_markdown(title, date, content, image=None):
     path = os.path.join(BASE_DIR, 'posts')
     os.makedirs(path, exist_ok=True)
     fullpath = os.path.join(path, filename)
-    md = f"---\ntitle: {title}\ndate: {date}\nimage: {image if image else 'null'}\n---\n\n{content}\n"
-    with open(fullpath, 'w', encoding='utf-8') as f:
-        f.write(md)
+    write_markdown_file(fullpath, title, date, content, image)
+    return fullpath, filename
+
+
+def update_post_markdown(filename, title, date, content, image=None):
+    path = os.path.join(BASE_DIR, 'posts')
+    fullpath = os.path.join(path, filename)
+    if not os.path.exists(fullpath):
+        os.makedirs(path, exist_ok=True)
+    write_markdown_file(fullpath, title, date, content, image)
     return fullpath
 
 
@@ -77,8 +105,12 @@ def git_commit_and_push(paths, message):
     # try normal git push first; if GITHUB_TOKEN is set, use it for authenticated push
     token = os.environ.get('GITHUB_TOKEN') or os.environ.get('GH_TOKEN')
     try:
-        # add files
-        subprocess.run(['git', 'add'] + paths, check=True)
+        # stage deletions and changes
+        subprocess.run(['git', 'add', '--all'], check=True)
+        # ensure new files are added explicitly
+        for path in paths:
+            if os.path.exists(path):
+                subprocess.run(['git', 'add', path], check=True)
         subprocess.run(['git', 'commit', '-m', message], check=True)
     except subprocess.CalledProcessError:
         # nothing to commit or error
@@ -184,22 +216,32 @@ def new_post():
                 return redirect(request.url)
 
         conn = get_db_connection()
-        conn.execute(
-            'INSERT INTO posts (title, date, content, image) VALUES (?, ?, ?, ?)',
-            (title, date, content, image_filename),
+        cursor = conn.execute(
+            'INSERT INTO posts (title, date, content, image, markdown_filename) VALUES (?, ?, ?, ?, ?)',
+            (title, date, content, image_filename, None),
         )
+        post_id = cursor.lastrowid
         conn.commit()
-        conn.close()
-        # also create markdown and push to repo so static site is updated
+        md_path = None
         try:
-            md_path = create_post_markdown(title, date, content, image_filename)
+            fullpath, md_filename = create_post_markdown(title, date, content, image_filename)
+            conn.execute(
+                'UPDATE posts SET markdown_filename = ? WHERE id = ?',
+                (md_filename, post_id),
+            )
+            conn.commit()
+            md_path = fullpath
+        except Exception as e:
+            flash(f'Publicada, mas erro ao gerar o arquivo Markdown: {e}')
+        finally:
+            conn.close()
+
+        if md_path:
             pushed = git_commit_and_push([md_path], f"Add post: {title}")
             if pushed:
                 flash('Notícia publicada e enviada ao repositório.')
             else:
                 flash('Notícia publicada localmente, mas falha ao enviar ao repositório.')
-        except Exception as e:
-            flash(f'Publicada, mas erro ao gerar/commit: {e}')
         return redirect(url_for('index'))
 
     today = datetime.utcnow().strftime('%Y-%m-%d')
@@ -247,9 +289,34 @@ def edit_post(post_id):
             (title, date, content, image_filename, post_id),
         )
         conn.commit()
+
+        markdown_filename = post['markdown_filename']
+        md_path = None
+        if markdown_filename:
+            try:
+                md_path = update_post_markdown(markdown_filename, title, date, content, image_filename)
+            except Exception:
+                flash('Atualizada, mas falha ao atualizar o arquivo Markdown.')
+        else:
+            try:
+                md_path, md_filename = create_post_markdown(title, date, content, image_filename)
+                conn.execute(
+                    'UPDATE posts SET markdown_filename = ? WHERE id = ?',
+                    (md_filename, post_id),
+                )
+                conn.commit()
+            except Exception:
+                flash('Atualizada, mas falha ao gerar o arquivo Markdown.')
+
         conn.close()
-        # Note: editing via UI does not currently update markdown files in repo
-        flash('Notícia atualizada (não sincronizada automaticamente com o repositório).')
+        if md_path:
+            pushed = git_commit_and_push([md_path], f"Update post: {title}")
+            if pushed:
+                flash('Notícia atualizada e sincronizada com o repositório.')
+            else:
+                flash('Notícia atualizada localmente, mas falha ao sincronizar com o repositório.')
+        else:
+            flash('Notícia atualizada.')
         return redirect(url_for('index'))
 
     conn.close()
@@ -265,6 +332,13 @@ def delete_post(post_id):
         if post['image']:
             try:
                 os.remove(os.path.join(app.config['UPLOAD_FOLDER'], post['image']))
+            except OSError:
+                pass
+        if post['markdown_filename']:
+            try:
+                md_path = os.path.join(BASE_DIR, 'posts', post['markdown_filename'])
+                os.remove(md_path)
+                git_commit_and_push([md_path], f"Remove post: {post['title']}")
             except OSError:
                 pass
         conn.execute('DELETE FROM posts WHERE id = ?', (post_id,))

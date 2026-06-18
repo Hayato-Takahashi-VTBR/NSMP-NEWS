@@ -24,9 +24,9 @@ def load_posts():
             meta = post.metadata
             meta.setdefault('title', os.path.splitext(os.path.basename(path))[0])
             meta.setdefault('date', '')
-            meta.setdefault('image', None)
+            image = meta.get('image')
+            meta['image'] = f"static/uploads/{image}" if image else None
             slug = os.path.splitext(os.path.basename(path))[0]
-            # Create preview (first 200 chars or full content if shorter)
             preview = post.content[:200] + ('...' if len(post.content) > 200 else '')
             posts.append({'meta':meta, 'html':html, 'preview':preview, 'slug':slug})
     posts.sort(key=lambda p: p['meta'].get('date',''), reverse=True)

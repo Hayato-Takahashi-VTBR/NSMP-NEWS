@@ -33,9 +33,9 @@
             </div>
             <div class="post-body">
               {% if post.meta.image %}
-                <img class="post-image" src="{{ post.meta.image }}" alt="imagem">
+                <img class="post-image" src="../{{ post.meta.image }}" alt="imagem">
               {% endif %}
-              <pre class="post-text">{{ post.html | safe }}</pre>
+              <div class="post-text">{{ post.html | safe }}</div>
             </div>
           </div>
         </div>
