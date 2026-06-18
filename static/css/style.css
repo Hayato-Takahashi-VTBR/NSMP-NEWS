@@ -1,20 +1,21 @@
 .terminal-bg{background:#000;color:#23ff00;min-height:100vh;margin:0;padding:0}
-body{font-family: 'Courier New', Courier, monospace;margin:0;padding:0;background:#000;color:#23ff00}
-.terminal-window{width:100%;max-width:100%;min-height:100vh;margin:0 auto;border:4px solid #083;background:linear-gradient(180deg,#001100 0,#000 100%);box-shadow:inset 0 0 80px rgba(0,255,120,0.05),0 0 30px rgba(0,255,120,0.12);box-sizing:border-box;border-radius:0}
-.terminal-topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:2px solid #062;background:rgba(0,0,0,0.95);position:sticky;top:0;z-index:20
+html, body{width:100%;min-height:100%;margin:0;padding:0;background:#000;color:#23ff00;overflow-x:hidden}
+body{font-family:'Courier New',Courier,monospace;box-sizing:border-box}
+.terminal-window{width:100vw;max-width:100vw;min-height:100vh;margin:0 auto;border:4px solid #083;background:linear-gradient(180deg,#001100 0,#000 100%);box-shadow:inset 0 0 80px rgba(0,255,120,0.05),0 0 30px rgba(0,255,120,0.12);box-sizing:border-box;border-radius:0}
+.terminal-topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:2px solid #062;background:rgba(0,0,0,0.95);position:sticky;top:0;z-index:20}
 .dot{width:12px;height:12px;border-radius:50%;display:inline-block}
 .dot.red{background:#ff5f56}
 .dot.yellow{background:#ffbd2e}
 .dot.green{background:#27c93f}
 .terminal-topbar .title{color:#aaffaa;font-weight:bold}
 .terminal-screen{padding:20px 24px 28px}
-.wrap{max-width:920px;margin:0 auto;padding:0 18px}
+.wrap{width:100%;max-width:1200px;margin:0 auto;padding:0 18px}
 .site-header{padding:10px 0 14px 0}
 .site-header nav{margin-bottom:10px}
 .site-header a{margin-right:16px;color:#7aff7a;text-decoration:none;font-size:14px}
 .admin-badge{display:inline-block;color:#001100;background:#7aff7a;padding:5px 10px;border-radius:6px;margin-left:12px;font-weight:bold;font-size:13px}
 
-.forum-post{display:flex;flex-wrap:wrap;border-top:1px dashed #073;padding:18px 0}
+.forum-post{display:flex;flex-wrap:wrap;border-top:1px dashed #073;padding:18px 0;min-width:0}
 .post-left{width:100px;text-align:center;padding-right:14px;flex-shrink:0}
 .avatar{width:64px;height:64px;border-radius:8px;background:#001100;border:2px solid #073;color:#23ff00;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto}
 .user{margin-top:10px;color:#7aff7a;font-size:13px}
