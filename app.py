@@ -1,6 +1,7 @@
 import glob
 import os
 import sqlite3
+import sys
 from datetime import datetime
 from functools import wraps
 from dotenv import load_dotenv
@@ -58,6 +59,24 @@ def init_db():
     except sqlite3.OperationalError:
         pass
     conn.close()
+    cleanup_orphan_markdown_files()
+
+
+def cleanup_orphan_markdown_files():
+    conn = get_db_connection()
+    valid_names = {
+        row['markdown_filename']
+        for row in conn.execute('SELECT markdown_filename FROM posts').fetchall()
+        if row['markdown_filename']
+    }
+    conn.close()
+
+    for fullpath in glob.glob(os.path.join(BASE_DIR, 'posts', '*.md')):
+        if os.path.basename(fullpath) not in valid_names:
+            try:
+                os.remove(fullpath)
+            except OSError:
+                pass
 
 
 def slugify(s):
@@ -334,15 +353,33 @@ def delete_post(post_id):
                 os.remove(os.path.join(app.config['UPLOAD_FOLDER'], post['image']))
             except OSError:
                 pass
+        md_path = None
         if post['markdown_filename']:
+            md_path = os.path.join(BASE_DIR, 'posts', post['markdown_filename'])
+        else:
+            # Fallback for older posts that were not linked to a markdown filename
+            slug = slugify(post['title'])
+            pattern = os.path.join(BASE_DIR, 'posts', f"{post['date']}-{slug}-*.md")
+            matches = glob.glob(pattern)
+            if len(matches) == 1:
+                md_path = matches[0]
+
+        if md_path and os.path.exists(md_path):
             try:
-                md_path = os.path.join(BASE_DIR, 'posts', post['markdown_filename'])
                 os.remove(md_path)
                 git_commit_and_push([md_path], f"Remove post: {post['title']}")
-            except OSError:
-                pass
+            except Exception as e:
+                print('delete markdown error:', e, file=sys.stderr)
+
         conn.execute('DELETE FROM posts WHERE id = ?', (post_id,))
         conn.commit()
+
+        # Rebuild local static site output so deleted post disappears immediately
+        try:
+            subprocess.run([sys.executable, os.path.join(BASE_DIR, 'build_static.py')], check=False)
+        except Exception as e:
+            print('build_static error:', e, file=sys.stderr)
+
     conn.close()
     flash('Notícia removida.')
     return redirect(url_for('index'))
