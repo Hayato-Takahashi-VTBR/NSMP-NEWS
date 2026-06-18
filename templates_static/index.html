@@ -1,65 +1,27 @@
-<!doctype html>
-<html lang="pt-BR">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>NSMP - Central de Notícias</title>
-    <link rel="stylesheet" href="static/css/style.css">
-  </head>
-  <body class="terminal-bg">
-    <div class="terminal-window">
-      <div class="terminal-topbar">
-        <div class="dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
-        <div class="title">NSMP - Central de Notícias</div>
-        <div class="clock" id="clock"></div>
+{% extends 'base.html' %}
+
+{% block content %}
+  {% if posts|length == 0 %}
+    <p>Sem notícias ainda.</p>
+  {% endif %}
+  {% for post in posts %}
+    <div class="forum-post">
+      <div class="post-left">
+        <div class="avatar">K</div>
+        <div class="user">Kaiser</div>
       </div>
-      <header class="site-header">
-        <div class="wrap">
-          <nav>
-            <a href="index.html">Início</a>
-          </nav>
+      <div class="post-right">
+        <div class="post-head">
+          <div class="post-title"><a href="posts/{{ post.slug }}.html" class="post-link">{{ post.meta.title }}</a></div>
+          <div class="post-meta">#{{ post.id }} • {{ post.meta.date }}</div>
         </div>
-      </header>
-      <main class="wrap terminal-screen">
-        {% if posts|length == 0 %}
-          <p>Sem notícias ainda.</p>
-        {% endif %}
-        {% for post in posts %}
-          <div class="forum-post">
-            <div class="post-left">
-              <div class="avatar">K</div>
-              <div class="user">Kaiser</div>
-            </div>
-            <div class="post-right">
-              <div class="post-head">
-                <div class="post-title"><a href="posts/{{ post.slug }}.html" style="color:#23ff00;text-decoration:none">{{ post.meta.title }}</a></div>
-                <div class="post-meta">#{{ post.id }} • {{ post.meta.date }}</div>
-              </div>
-              <div class="post-body">
-                {% if post.meta.image %}
-                  <img class="post-image" src="{{ post.meta.image }}" alt="imagem">
-                {% endif %}
-                <div class="post-text">{{ post.html | safe }}</div>
-              </div>
-            </div>
-          </div>
-        {% endfor %}
-      </main>
-      <footer class="site-footer">
-        <div class="wrap">
-          <small>&copy; NSMP</small>
+        <div class="post-body">
+          {% if post.meta.image %}
+            <img class="post-image" src="{{ post.meta.image }}" alt="imagem">
+          {% endif %}
+          <div class="post-text">{{ post.html | safe }}</div>
         </div>
-      </footer>
+      </div>
     </div>
-    <script>
-      function updateClock(){
-        const el=document.getElementById('clock');
-        if(!el) return;
-        const d=new Date();
-        el.textContent = d.toLocaleString();
-      }
-      setInterval(updateClock,1000);
-      updateClock();
-    </script>
-  </body>
-</html>
+  {% endfor %}
+{% endblock %}

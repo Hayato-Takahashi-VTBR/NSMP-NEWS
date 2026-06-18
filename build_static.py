@@ -56,7 +56,7 @@ def build():
         posts_with_id.append(p)
     
     with open(os.path.join(OUT_DIR, 'index.html'), 'w', encoding='utf-8') as f:
-        f.write(tpl.render(posts=posts_with_id))
+        f.write(tpl.render(posts=posts_with_id, static_dir='static', home_url='index.html'))
 
     # render posts
     post_tpl = env.get_template('post.html')
@@ -65,7 +65,7 @@ def build():
     for i, p in enumerate(posts_with_id, 1):
         out_path = os.path.join(posts_out, p['slug'] + '.html')
         with open(out_path, 'w', encoding='utf-8') as f:
-            f.write(post_tpl.render(post=p))
+            f.write(post_tpl.render(post=p, static_dir='../static', home_url='../index.html', title=p['meta'].get('title')))
 
     print('Built', len(posts), 'posts into', OUT_DIR)
 
